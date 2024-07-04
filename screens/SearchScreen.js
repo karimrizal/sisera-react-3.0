@@ -3,6 +3,7 @@ import { View, TextInput, Button, StyleSheet, FlatList, TouchableOpacity, Text, 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useFocus } from '../FocusContext';
 
 const SearchScreen = () => {
   const [searchText, setSearchText] = useState('');
@@ -10,13 +11,13 @@ const SearchScreen = () => {
   const navigation = useNavigation();
   const inputRef = useRef(null);
   const isFocused = useRef(false);
-
+  const { isLainnyaFocused, setLainnyaFocused } = useFocus();
   
   useEffect(() => {
     const loadSearchHistory = async () => {
       try {
         const history = await AsyncStorage.getItem('searchHistory');
-        console.log('Stored search histor:', history);
+        
         if (history) {
           setSearchHistory(JSON.parse(history));
         }
@@ -30,9 +31,11 @@ const SearchScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
+      setLainnyaFocused(true);
       isFocused.current = true;
       inputRef.current.focus();
       return () => {
+        setLainnyaFocused(false);
         isFocused.current = false;
       };
     }, [])
@@ -136,6 +139,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   inputContainer: {
     flexDirection: 'row',

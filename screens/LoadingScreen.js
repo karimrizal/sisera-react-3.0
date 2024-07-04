@@ -6,14 +6,14 @@ const LoadingScreen = ({ onFinish }) => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onFinish();
-    }, 10000); // 10 seconds
+    }, 3000); // 10 seconds
 
     return () => clearTimeout(timeoutId);
   }, [onFinish]);
 
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons name="download-box"  size={30} />
+      <Image style={styles.logo} source={require('../assets/splashscreen.png')} />
     </View>
   );
 };
@@ -26,8 +26,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', // Set your desired background color
   },
   logo: {
-    width: 200, // Adjust the width and height based on your logo size
-    height: 200,
+    flex :1,
     resizeMode: 'contain',
   },
 });

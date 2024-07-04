@@ -10,6 +10,7 @@ import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
+
 const ApiView = ({ route }) => {
   const [apiData, setApiData] = useState(null);
   const { brsId } = route.params;
@@ -26,8 +27,8 @@ const ApiView = ({ route }) => {
     // Function to show the bottom tab bar
     const showTabBar = () => {
       navigation.getParent()?.setOptions({ tabBarStyle: {
-        height: 70,
-        backgroundColor: '#E3ECFC',
+        height: 100,
+        backgroundColor: '#F5FBFF',
         justifyContent: "center",
         alignItems: "center",
       }, });
@@ -94,10 +95,10 @@ const ApiView = ({ route }) => {
             showToast2('error', 'Save failed', 'There was an error during file save.');
           });
       } else {
-        shareAsync(uri);
+        Sharing.shareAsync(uri);
       }
     } else {
-      shareAsync(uri);
+      Sharing.shareAsync(uri);
     }
   };
 
@@ -146,7 +147,7 @@ const ApiView = ({ route }) => {
   
         // Check if the fileUri is a valid string
         if (typeof fileUri === 'string' && fileUri.trim() !== '') {
-          const message = `Check out this link: ${fileUri}`;
+          const message = `Temukan Berita Resmi Statistik ${apiData.data.title} pada link berikut: ${fileUri}`;
   
           // Share the link using Expo's Sharing module
           await Share.share({
@@ -169,13 +170,13 @@ const ApiView = ({ route }) => {
   `;
   
   return (
-    <View style={{ flex: 1, paddingTop : '2%', }}>
+    <View style={{ flex: 1, paddingTop : '2%',backgroundColor: '#fff', }}>
     <ScrollView>
       <View>
      
 
       
-      <Image source={{ uri: apiData?.data?.thumbnail }} style={{  height: 300, maxWidth:'100%', marginLeft : 15, marginRight : 15 }} />
+      <Image source={{ uri: apiData?.data?.thumbnail }} style={{  height: 300, maxWidth:'100%', marginLeft : 15, marginRight : 15,objectFit : 'fill' }} />
       <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'justify', marginVertical: 10, paddingLeft : '4%', paddingRight : '4%' }}>
         {apiData?.data?.title}
       </Text>
@@ -193,7 +194,7 @@ const ApiView = ({ route }) => {
         ) : null} 
         
       </ScrollView>
-
+      <Text>{'\n'}</Text>   
       </View>
       <Toast ref={(ref) => Toast.setRef(ref)} />
     </ScrollView>
@@ -207,14 +208,14 @@ const ApiView = ({ route }) => {
           style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
         >
           <MaterialCommunityIcons name="download-box"  size={30} />
-          <Text>Download</Text>
+          
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleShare}
           style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
         >
           <MaterialCommunityIcons name="share-variant"  size={30} />
-          <Text>Share</Text>
+          
         </TouchableOpacity>
         <TouchableOpacity
           

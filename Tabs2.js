@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; 
-import { View, Image, Pressable, TouchableOpacity, Text, Linking } from "react-native";
+import { View,Platform, Image, Pressable, TouchableOpacity, Text, Linking,Dimensions } from "react-native";
 import { Badge, BottomSheet, ListItem } from "@rneui/themed";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -63,6 +63,8 @@ function LogoBPS() {
 
 function RightHeader() {
   const navigation = useNavigation();
+  const { badgeStatus } = useFocus();
+
   return (
     <View
       style={{
@@ -87,7 +89,7 @@ function RightHeader() {
       >
         <Image source={require('./assets/Iconly_notification.png')} />
         {/* <Image source={require('./assets/number_badge.png')}/> */}
-       <Badge status='error' />
+       <Badge status={badgeStatus} />
       </Pressable>
 
     </View>
@@ -204,8 +206,8 @@ function TabBar({ state, descriptors, navigation }) {
 function StackPublikasi() {
   return (
     <Stack.Navigator>
-    <Stack.Screen name="Publikasi " component={PublikasiScreen} />
-    <Stack.Screen name="Publikasi Detail" component={PublikasiDetail} />
+    <Stack.Screen name="Publikasi " component={PublikasiScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="Publikasi Detail" component={PublikasiDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
     
   </Stack.Navigator>
   );
@@ -214,11 +216,29 @@ function StackPublikasi() {
 function StackHome() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Beranda " component={HomeScreen} />
-    <Stack.Screen name="Publikasi Detail" component={PublikasiDetail} />
-    <Stack.Screen name="Tabel Detail" component={TabelDetail} />
-    <Stack.Screen name="BRS Detail" component={BRSDetail}   />
+      <Stack.Screen name="Beranda " component={HomeScreen} options={{ headerShown: false,}} />
+    <Stack.Screen name="Publikasi Detail" component={PublikasiDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="Tabel Detail" component={TabelDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="BRS Detail" component={BRSDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }}   />
     <Stack.Screen name="Berita Detail" component={BeritaDetail}   />
+    
+  </Stack.Navigator>
+  );
+}
+
+function StackNotifikasi() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Notifikasi " component={NotifikasiScreen} options={{ tabBarStyle: {
+            height: 80,
+            backgroundColor: '#F5FBFF',
+            justifyContent: "center",
+            alignItems: "center",
+          },   headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}  }} />
+    <Stack.Screen name="Publikasi Detail" component={PublikasiDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="Tabel Detail" component={TabelDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="BRS Detail" component={BRSDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }}   />
+    <Stack.Screen name="Berita Detail" component={BeritaDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }}   />
     
   </Stack.Navigator>
   );
@@ -227,8 +247,8 @@ function StackHome() {
 function StackBRS() {
   return (
     <Stack.Navigator>
-    <Stack.Screen name="BRS " component={BRSScreen} />
-    <Stack.Screen name="BRS Detail" component={BRSDetail}   />
+    <Stack.Screen name="BRS " component={BRSScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="BRS Detail" component={BRSDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }}   />
     
   </Stack.Navigator>
   );
@@ -237,8 +257,8 @@ function StackBRS() {
 function StackBerita() {
   return (
     <Stack.Navigator>
-    <Stack.Screen name="Berita " component={BeritaScreen} />
-    <Stack.Screen name="Berita Detail" component={BeritaDetail} />
+    <Stack.Screen name="Berita " component={BeritaScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="Berita Detail" component={BeritaDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
     
   </Stack.Navigator>
   );
@@ -257,9 +277,9 @@ function StackLainnya() {
 function StackTabel() {
   return (
     <Stack.Navigator>
-    <Stack.Screen name="Tabel " component={SubjectScreen} />
-    <Stack.Screen name="Tabel Subject" component={TabelScreen} />
-    <Stack.Screen name="Tabel Detail" component={TabelDetail} />
+    <Stack.Screen name="Tabel " component={SubjectScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }}  />
+    <Stack.Screen name="Tabel Subject" component={TabelScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="Tabel Detail" component={TabelDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
   </Stack.Navigator>
   );
 }
@@ -267,8 +287,8 @@ function StackTabel() {
 function StackSyantik() {
   return (
     <Stack.Navigator>
-    <Stack.Screen name="Syantik " component={Syantik} />
-    <Stack.Screen name="Tabel Syantik" component={SyantikScreen} />
+    <Stack.Screen name="Syantik " component={Syantik} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
+    <Stack.Screen name="Tabel Syantik" component={SyantikScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
     
   </Stack.Navigator>
   );
@@ -281,15 +301,15 @@ function StackSearch() {
     <Stack.Screen
         name="Search "
         component={SearchScreen}
-        options={{
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <MaterialCommunityIcons name="arrow-left"  size={30} />
-            </TouchableOpacity>
-          ),
+        options={{  headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialCommunityIcons name="arrow-left"  size={30} />
+          </TouchableOpacity>
+        ),
+          headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}
         }}
       />
-    <Stack.Screen name="Search Detail" component={SearchDetail} />
+    <Stack.Screen name="Search Detail" component={SearchDetail} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'} }} />
     <Stack.Screen name="Publikasi Detail" component={PublikasiDetail} options={{
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.navigate('Notifikasi')}>
@@ -330,7 +350,16 @@ export default function TabNavigator() {
   const navigation = useNavigation();
   const { isLainnyaFocused } = useFocus();
 
-  
+  const { width, height } = Dimensions.get('window');
+
+const getDynamicFontSize = () => {
+  if (width >= 1024){
+    return width/46;
+  }
+  else{
+    return 14;
+  }
+}
  
   const list = [
     { title: 'Infografis', onPress: () => { navigation.navigate('Infografis', { /* optional params */ });setIsVisible(false); } },
@@ -347,13 +376,7 @@ export default function TabNavigator() {
         setIsVisible(false);
       },
     },
-    {
-      title: 'Data Kominfo Sultra',
-      onPress: () => {
-        Linking.openURL('https://v2.simdata.sultraprov.go.id/frontend/homepage');
-        setIsVisible(false);
-      },
-    },
+   
     {
       title: 'Survey Kepuasan Pelanggan',
       onPress: () => {
@@ -384,16 +407,28 @@ export default function TabNavigator() {
       onPress: () => setIsVisible(false),
     },
   ];
+  if (Platform.OS === 'android') {
   return (
+    
+    
     <View style={{ flex: 1 }}>
-      <Tab.Navigator
       
+      <Tab.Navigator 
+        
         screenOptions={({ route }) => ({
+          tabBarStyle: {
+            height: 100,
+            backgroundColor: '#F5FBFF',
+            justifyContent: "center",
+            alignItems: "center",
+          },
+          
+          
           tabBarLabel: ({ focused }) => {
             return focused
               ? <Text style={{
                 fontFamily: 'DMSansBold',
-                fontSize: 14,
+                fontSize: getDynamicFontSize(),
                 color: '#093C88',
                 alignSelf: "center",
                 justifyContent: "center",
@@ -401,7 +436,7 @@ export default function TabNavigator() {
               }}>{route.name}</Text>
               : <Text style={{
                 fontFamily: 'DMSansRegular',
-                fontSize: 14,
+                fontSize: getDynamicFontSize(),
                 color: '#093C88',
                 alignSelf: "center",
                 justifyContent: "center",
@@ -410,16 +445,13 @@ export default function TabNavigator() {
               }}>{route.name}</Text>
 
           },
-          tabBarStyle: {
-            height: 80,
-            backgroundColor: '#F5FBFF',
-            justifyContent: "center",
-            alignItems: "center",
-          },
+          
           
           
         })}
       >
+
+
       <Tab.Screen
         name="Beranda"
         component={StackHome}
@@ -429,6 +461,7 @@ export default function TabNavigator() {
           
           headerRight: () => <RightHeader />,
           // tabBarStyle: { color: '#093C88', backgroundColor: '#e3ecfc' },
+          headerTitleAlign :'left',
           tabBarIcon: ({focused, color}) => {
             return focused ? < BarIconActive_Beranda/> : <BarIconInactive_Beranda />
           },
@@ -439,7 +472,9 @@ export default function TabNavigator() {
       <Tab.Screen name="Publikasi" 
       component={StackPublikasi} 
       options={{
+        
         headerShown: false,
+        
         tabBarIcon: ({focused, color}) => {
           return focused ? <BarIconActive_Publikasi /> : <BarIconInactive_Publikasi />    
         },
@@ -450,7 +485,7 @@ export default function TabNavigator() {
         name="Indikator Strategis"
         component={IndikatorScreen}
         options={{
-          
+          headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'},
           tabBarIcon: ({ color, size }) => (
             <View
              style={{
@@ -481,22 +516,9 @@ export default function TabNavigator() {
           }
         }}
       />
-      
-      
 
-      
-  <Stack.Screen name="Infografis" component={InfografisScreen} options={{  tabBarButton: () => null }} />    
- <Stack.Screen name="BRS" component={StackBRS} options={{ headerShown: false, tabBarButton: () => null }} />
- <Stack.Screen name="Berita" component={StackBerita} options={{ headerShown: false, tabBarButton: () => null }} />
- <Stack.Screen name="Konsultasi" component={KonsultasiScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} /> 
- <Stack.Screen name="Jadwal Rilis" component={ARCScreen} options={{  tabBarButton: () => null }} />
- <Stack.Screen name="Syantik" component={StackSyantik} options={{headerShown: false,  tabBarButton: () => null }} />
- <Stack.Screen name="Notifikasi" component={NotifikasiScreen} options={{  tabBarButton: () => null }} />
- <Stack.Screen name="Search" component={StackSearch} options={{headerShown: false,  tabBarButton: () => null, tabBarStyle: { display: 'none' }  }} />
 
- 
- 
-      <Tab.Screen
+<Tab.Screen
   name="Lainnya"
   component={StackLainnya}
   options={({ route }) => ({
@@ -512,6 +534,21 @@ export default function TabNavigator() {
   })}
   
 />
+      
+      
+
+      
+  <Stack.Screen name="Infografis" component={InfografisScreen} options={{ headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} />    
+ <Stack.Screen name="BRS" component={StackBRS} options={{ headerShown: false, tabBarButton: () => null }} />
+ <Stack.Screen name="Berita" component={StackBerita} options={{ headerShown: false, tabBarButton: () => null }} />
+ <Stack.Screen name="Konsultasi" component={KonsultasiScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} /> 
+ <Stack.Screen name="Jadwal Rilis" component={ARCScreen} options={{ headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} />
+ <Stack.Screen name="Syantik" component={StackSyantik} options={{headerShown: false,  tabBarButton: () => null }} />
+ <Stack.Screen name="Notifikasi" component={StackNotifikasi} options={{ headerShown: false, headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} />
+ <Stack.Screen name="Search" component={StackSearch} options={{headerShown: false,  tabBarButton: () => null, tabBarStyle: { display: 'none' } }} />
+
+ 
+ 
       
     </Tab.Navigator>
     <BottomSheet modalProps={{}} isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
@@ -531,4 +568,167 @@ export default function TabNavigator() {
       </BottomSheet>
     </View>
   )
-}
+} else 
+return (
+    
+    
+  <View style={{ flex: 1 }}>
+    
+    <Tab.Navigator 
+      
+      screenOptions={({ route }) => ({
+        tabBarStyle: {
+          height: 100,
+          backgroundColor: '#F5FBFF',
+          justifyContent: "center",
+          alignItems: "center",
+        },
+        
+        
+        tabBarItemStyle: {
+          height: 75
+        },
+        tabBarLabel: ({ focused }) => {
+          return focused
+            ? <Text style={{
+              fontFamily: 'DMSansBold',
+              fontSize: getDynamicFontSize(),
+              color: '#093C88',
+              alignSelf: "center",
+              justifyContent: "center",
+              flex : 1,
+            }}>{route.name}</Text>
+            : <Text style={{
+              fontFamily: 'DMSansRegular',
+              fontSize: getDynamicFontSize(),
+              color: '#093C88',
+              alignSelf: "center",
+              justifyContent: "center",
+              flex :1,
+              
+            }}>{route.name}</Text>
+
+        },
+        
+        
+        
+      })}
+    >
+
+
+    <Tab.Screen
+      name="Beranda"
+      component={StackHome}
+      options={{
+        headerShadowVisible: false,
+        headerTitle: () => <LogoBPS />,
+        
+        headerRight: () => <RightHeader />,
+        // tabBarStyle: { color: '#093C88', backgroundColor: '#e3ecfc' },
+        headerTitleAlign :'left',
+        tabBarIcon: ({focused, color}) => {
+          return focused ? < BarIconActive_Beranda/> : <BarIconInactive_Beranda />
+        },
+      }}
+
+    />
+
+    <Tab.Screen name="Publikasi" 
+    component={StackPublikasi} 
+    options={{
+      
+      headerShown: false,
+      
+      tabBarIcon: ({focused, color}) => {
+        return focused ? <BarIconActive_Publikasi /> : <BarIconInactive_Publikasi />    
+      },
+    }}
+     />
+
+<Tab.Screen
+      name="Indikator Strategis"
+      component={IndikatorScreen}
+      options={{
+        headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'},
+        tabBarIcon: ({ color, size }) => (
+          <View
+           style={{
+             position: "absolute",
+             bottom: 0,
+             height: 64,
+             width: 64,
+             borderRadius: 24,
+             justifyContent: 'center',
+             alignItems: 'center'
+           }}
+           >
+            <Image source={require('./assets/sisera-button.png')} style={{ width: 64, height: 64 }} />
+         </View>
+       ),
+       
+
+      }}
+    />
+    
+    <Tab.Screen
+      name="Tabel"
+      component={StackTabel}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({focused, color}) => {
+          return focused ? <BarIconActive_Tabel /> : <BarIconInactive_Tabel />
+        }
+      }}
+    />
+
+
+<Tab.Screen
+name="Lainnya"
+component={StackLainnya}
+options={({ route }) => ({
+   
+  tabBarIcon: ({ focused, color }) => {
+    return  isLainnyaFocused ? <BarIconActive_Lainnya /> : <BarIconInactive_Lainnya />;
+  },
+  tabBarButton: (props) => (
+    <CustomTabBarButton {...props}  onPress={() => setIsVisible(true)  }>
+     
+    </CustomTabBarButton>
+  ),
+})}
+
+/>
+    
+    
+
+    
+<Stack.Screen name="Infografis" component={InfografisScreen} options={{ headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} />    
+<Stack.Screen name="BRS" component={StackBRS} options={{ headerShown: false, tabBarButton: () => null }} />
+<Stack.Screen name="Berita" component={StackBerita} options={{ headerShown: false, tabBarButton: () => null }} />
+<Stack.Screen name="Konsultasi" component={KonsultasiScreen} options={{  headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} /> 
+<Stack.Screen name="Jadwal Rilis" component={ARCScreen} options={{ headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} />
+<Stack.Screen name="Syantik" component={StackSyantik} options={{headerShown: false,  tabBarButton: () => null }} />
+<Stack.Screen name="Notifikasi" component={StackNotifikasi} options={{ headerShown: false, headerStyle: {backgroundColor: '#1A8EEA'}, headerTitleStyle: {color: '#fff'}, tabBarButton: () => null }} />
+<Stack.Screen name="Search" component={StackSearch} options={{headerShown: false,  tabBarButton: () => null, tabBarStyle: { display: 'none' } }} />
+
+
+
+    
+  </Tab.Navigator>
+  <BottomSheet modalProps={{}} isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
+      {list.map((item, index) => (
+        <ListItem
+          key={index}
+          containerStyle={item.containerStyle}
+          onPress={() => {
+            item.onPress && item.onPress();
+          }}
+        >
+          <ListItem.Content>
+            <ListItem.Title style={item.titleStyle}>{item.title}</ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
+      ))}
+    </BottomSheet>
+  </View>
+) }

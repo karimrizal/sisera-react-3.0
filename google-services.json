@@ -1,0 +1,29 @@
+{
+    "project_info": {
+      "project_number": "121012887217",
+      "project_id": "react-sisera-2024",
+      "storage_bucket": "react-sisera-2024.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:121012887217:android:cd1bd580e00f6ed1e20c90",
+          "android_client_info": {
+            "package_name": "com.virtualbox.torchick.rog"
+          }
+        },
+        "oauth_client": [],
+        "api_key": [
+          {
+            "current_key": "AIzaSyCBNTAlTzLklPF5-N9QxhbVLxptfrQVmoE"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }

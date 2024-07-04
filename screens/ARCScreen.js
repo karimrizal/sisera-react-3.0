@@ -42,15 +42,23 @@ function BRSScreen() {
 }
 
 function ARCScreen({ navigation }) {
+
+  const webViewScript = `
+    (function() {
+      document.body.style.zoom = 0.5; 
+    })();
+  `;
   return (
-    <View style={{ flex: 1 }}>
-      <WebView nestedScrollEnabled
-        source={{ html: generateHTMLTable() }}
-        style={{ flex: 1 }}
-       
-        contentContainerStyle={{ width: '100%', overflowX: 'auto' }}
-      />
-    </View>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <WebView
+      nestedScrollEnabled
+      source={{ html: generateHTMLTable() }}
+      style={{ flex: 1 }}
+      contentContainerStyle={{ width: '100%', overflowX: 'auto' }}
+      injectedJavaScript={webViewScript}
+      javaScriptEnabled={true}
+    />
+  </View>
   );
 }
 
@@ -59,7 +67,7 @@ function Publikasicreen() {
   const data = JSON.parse(jsonData);
 
   return (
-    <ScrollView style={{ flex: 1, paddingtop : '15%' }}>
+    <ScrollView style={{ flex: 1, paddingtop : '15%', }}>
   {data.map((item, index) => (
     <View key={index} style={{ backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F0F0F0', flexDirection: "row", justifyContent: "center", alignItems: "center", borderBottomWidth: 1, borderBottomColor: 'black' }}>
       <Text style={{ flex: 1, padding: 10, textAlign: "center" }}>
@@ -82,6 +90,7 @@ function generateHTMLTable() {
   const tableContent = `
     
     <table style="border-collapse: collapse; width: 100%;">
+    
       <thead>
         <tr>
           <th style="border: 1px solid black; padding: 10px; text-align: center;">Materi</th>

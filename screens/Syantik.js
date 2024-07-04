@@ -47,25 +47,33 @@ useFocusEffect(
         item.dinas.toLowerCase().includes(searchText.toLowerCase())
     );
 
-  const renderTable = () => {
-    const tableHead = ['Judul', 'Dinas', 'Tahun'];
-    const tableData = filteredData
-      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-      .map(item => [
-        <TouchableOpacity key={item.nama} onPress={() => navigation.navigate('Tabel Syantik', { sumber: item.dinas, judul: item.nama, tableId: item.judul, tahun: item.tahun })}>
-          <Text>{item.nama}</Text>
-        </TouchableOpacity>,
-        item.dinas,
-        item.tahun,
-      ]);
-
-    return (
-      <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
-        <Row data={tableHead} style={{ height: 40, backgroundColor: '#f1f8ff' }} />
-        <Rows data={tableData} />
-      </Table>
-    );
-  };
+    const renderTable = () => {
+      const tableHead = ['Judul', 'Dinas', 'Tahun'];
+      const widthArr = [150, 150, 50]; // Set the width for each column
+    
+      const headerCells = tableHead.map((header, index) => (
+        <View key={header} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ textAlign: 'center', color: '#1A8EEA' }}>{header}</Text>
+        </View>
+      ));
+    
+      const tableData = filteredData
+        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+        .map((item) => [
+          <TouchableOpacity key={item.nama} onPress={() => navigation.navigate('Tabel Syantik', { sumber: item.dinas, judul: item.nama, tableId: item.judul, tahun: item.tahun })}>
+            <Text style={{ textAlign: 'left', color: '#1A8EEA', width: widthArr[0], padding: 10 }}>{item.nama}</Text>
+          </TouchableOpacity>,
+          <Text style={{ width: widthArr[1], padding: 10 }}>{item.dinas}</Text>,
+          <Text style={{ width: widthArr[2], padding: 6 }}>{item.tahun}</Text>,
+        ]);
+    
+      return (
+        <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+          <Row data={headerCells} style={{ height: 40, backgroundColor: '#f1f8ff' }} widthArr={widthArr} />
+          <Rows data={tableData} widthArr={widthArr} />
+        </Table>
+      );
+    };
 
   const handlePageChange = pageNumber => {
     setCurrentPage(pageNumber);
@@ -73,17 +81,26 @@ useFocusEffect(
 
   const handleItemPress = itemName => {
     // Handle the onPress action for the item.nama here
-    console.log(`Item '${itemName}' pressed`);
+   
   };
 
   return (
-    <ScrollView nestedScrollEnabled style={{ flex: 1, paddingLeft : '4%', paddingRight : '4%' }}>
+    <ScrollView nestedScrollEnabled style={{ flex: 1, paddingLeft : '4%', paddingRight : '4%', backgroundColor: '#fff', }}>
       <View>
-        <Text>Data DDA:</Text>
+        <Text></Text>
         <TextInput
-          placeholder="Search by Judul or Dinas"
+          placeholder="Cari berdasarkan Judul atau Dinas"
           value={searchText}
           onChangeText={text => setSearchText(text)}
+          style={{
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 8,
+            padding: 10,
+            marginBottom: 10,
+            flex :1,
+            
+          }}
         />
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" /> // Loading indicator

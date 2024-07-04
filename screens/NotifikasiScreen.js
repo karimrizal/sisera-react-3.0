@@ -8,7 +8,8 @@ import { useRoute } from "@react-navigation/native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useWilayah } from '../WilayahContext';
 import { useFocus } from '../FocusContext';
-import moment from 'moment';
+import { Badge, BottomSheet, ListItem } from "@rneui/themed";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const styles = StyleSheet.create({
@@ -16,6 +17,7 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans',
     color: 'white',
   },
+  
   textIndikator: {
     fontSize: 18,
     color: 'white',
@@ -42,10 +44,17 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSansBold'
   },
   itemContainer: {
-    flex: 1, // Set the desired width for each item
+    flex: 1, 
     marginRight: 16,
     paddingLeft: '4%',
     paddingTop: '4%',
+    backgroundColor: '#fff',
+   
+  },
+  container: {
+    flex: 1, 
+    
+    backgroundColor: '#fff',
    
   },
   itemContainerTabel: {
@@ -62,11 +71,11 @@ const styles = StyleSheet.create({
     
   },
   itemImage: {
-    width: 100, // Set the desired width for the image
-    height: 100, // Set the desired height for the image
+    width: 100, 
+    height: 100, 
     resizeMode: 'cover',
     borderRadius: 8,
-    marginRight: 16, // Adjust the margin as needed
+    marginRight: 16, 
   },
   itemImageInfografis: {
     width: '100%',
@@ -75,11 +84,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   InforagisImage: {
-    width: 300, // Set the desired width for the image
-    height: 300, // Set the desired height for the image
+    width: 300,
+    height: 300, 
     
     borderRadius: 4,
-    marginRight: 1, // Adjust the margin as needed
+    marginRight: 1, 
   },
   textContainer: {
   
@@ -110,18 +119,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
-    // Add the following style to allow multiline
-    // Adjust the number of lines as needed
-    // You may also want to adjust the height of the container accordingly
     lineHeight: 20,
     flexWrap: 'wrap',
   },
   textWaktu: {
     fontSize: 14,
     color: 'white',
-    // Add the following style to allow multiline
-    // Adjust the number of lines as needed
-    // You may also want to adjust the height of the container accordingly
     lineHeight: 18,
     flexWrap: 'wrap',
   },
@@ -137,8 +140,8 @@ const styles = StyleSheet.create({
   },
   modalImage: {
     flex: 1,
-    width: '100%', // Set the width to 100% of the screen width
-    height: '100%', // Set the height to 100% of the screen height
+    width: '100%', 
+    height: '100%',
     resizeMode: 'contain',
   },
   closeButton: {
@@ -165,37 +168,102 @@ export default function App() {
     
 const { isLainnyaFocused, setLainnyaFocused } = useFocus();
 const [currentMonthText, setCurrentMonthText] = useState('');
+const { setBadgeStatus } = useFocus();
+const { cumulativeTotal } = useFocus();
+
+const { brsStatus } = useFocus();
+const { brsCount } = useFocus();
+
+const { publikasiStatus } = useFocus();
+const { publikasiCount } = useFocus();
+
+const { tabelStatus } = useFocus();
+const { tabelCount } = useFocus();
+
+const { beritaStatus } = useFocus();
+const { beritaCount } = useFocus();
+
 useFocusEffect(
     React.useCallback(() => {
-      // Runs when the screen is focused
+      
       setLainnyaFocused(true);
-
-      // Clean up function for when the component unmounts or loses focus
+      setBadgeStatus('ok');
+       AsyncStorage.setItem('currentTotal', String(cumulativeTotal));
       return () => {
+        
         setLainnyaFocused(false);
       };
-    }, [setLainnyaFocused])
+    }, [setLainnyaFocused, setBadgeStatus])
   );
   useEffect(() => {
     const currentDate = new Date();
-    const currentMonth = moment(currentDate).locale('id').format('MMMM');
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    const currentMonth = months[currentDate.getMonth()];
     setCurrentMonthText(`Data Terbaru Bulan ${currentMonth}`);
   }, []);
     
   return (
-    <View style={{ flex: 1 }}>
-        <Text style={{marginVertical: 10, fontWeight: 'bold',textAlign: 'center', fontSize : 24}}>{currentMonthText}</Text>
+    <View style={{ flex: 1,backgroundColor: '#fff', }}>
+        <Text style={{marginVertical: 10, fontWeight: 'bold',textAlign: 'center', fontSize : 20}}>{currentMonthText}</Text>
     <Tab.Navigator>
-    <Tab.Screen name="Publikasi">
-    {() => <PublikasiScreen/>}
-  </Tab.Screen>
-  <Tab.Screen name="BRS">
+    <Tab.Screen
+      name="BRS"
+      
+      options={{
+        tabBarLabel: ({ color, focused }) => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color, marginRight: 5 }}>BRS</Text>
+            <Badge status={ brsStatus } value={ brsCount } />
+          </View>
+        ),
+      }}
+    >
     {() => <BRSScreen/>}
   </Tab.Screen>
-  <Tab.Screen name="Tabel">
+  <Tab.Screen
+      name="Publikasi"
+      
+      options={{
+        tabBarLabel: ({ color, focused }) => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color, marginRight: 5 }}>Publikasi</Text>
+            <Badge status={ publikasiStatus } value={ publikasiCount } />
+          </View>
+        ),
+      }}
+    >
+    {() => <PublikasiScreen/>} 
+  </Tab.Screen>
+  
+  <Tab.Screen
+      name="Tabel"
+      
+      options={{
+        tabBarLabel: ({ color, focused }) => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color, marginRight: 5 }}>Tabel</Text>
+            <Badge status={ tabelStatus } value={ tabelCount } />
+          </View>
+        ),
+      }}
+    >
     {() => <TabelScreen/>}
   </Tab.Screen>
-  <Tab.Screen name="Berita">
+  <Tab.Screen
+      name="Berita"
+      
+      options={{
+        tabBarLabel: ({ color, focused }) => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color, marginRight: 5 }}>Berita</Text>
+            <Badge status={ beritaStatus } value={ beritaCount } />
+          </View>
+        ),
+      }}
+    >
     {() => <BeritaScreen/>}
   </Tab.Screen>
   
@@ -213,20 +281,25 @@ function BRSScreen() {
     const { selectedWilayah, setWilayah } = useWilayah();
     const [totalPages, setTotalPages] = useState(1);
     const flatListRef = useRef();
+
+    const { setBRSStatus } = useFocus();
+    const { setBRSCount } = useFocus();
+    const { totalBRS } = useFocus();
+
+    const { brsStatus } = useFocus();
+    const { brsCount } = useFocus();
   
     const fetchAndUpdateData = async (currentPage) => {
       try {
         const API_URL_PUBLIKASI = `https://webapi.bps.go.id/v1/api/list/?model=pressrelease&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985&page=${currentPage}`;
-        console.log('API URL:', API_URL_PUBLIKASI);
   
         const response = await fetch(API_URL_PUBLIKASI);
         const result = await response.json();
-        console.log('API Response:', result);
   
         if (result.status === 'OK' && result.data && result.data.length > 1) {
-          // Filter data for unique combinations of month and year
+          
           const currentDate = new Date();
-          const currentMonth = currentDate.getMonth() + 1; // Months are zero-based
+          const currentMonth = currentDate.getMonth() + 1; 
           const currentYear = currentDate.getFullYear();
           const uniqueItems = new Map();
   
@@ -236,7 +309,6 @@ function BRSScreen() {
             const itemYear = itemDate.getFullYear();
             const key = `${itemMonth}_${itemYear}_${item.brs_id}`;
   
-            // Only add the item to uniqueItems if it hasn't been added for this month and year
             if (itemMonth === currentMonth && itemYear === currentYear && !uniqueItems.has(key)) {
               uniqueItems.set(key, item);
             }
@@ -244,6 +316,7 @@ function BRSScreen() {
   
           setData((prevData) => [...prevData, ...Array.from(uniqueItems.values())]);
           setTotalPages(result.page);
+          
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -259,20 +332,36 @@ function BRSScreen() {
     }, [selectedWilayah]);
   
     useEffect(() => {
-      fetchData(1);
+      const fetchDataAndUpdate = async (currentPage) => {
+        try {
+          setLoading(true);
+          setPage(currentPage);
+          
+    
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      fetchDataAndUpdate(1);
+    
     }, [selectedWilayah]);
+   
+  
     useFocusEffect(
         React.useCallback(() => {
-          console.log('Screen is focused');
+        
           setData([]);
           setPage(1);
-          fetchData(1);
+          fetchAndUpdateData(1);
+
+          
     
-          // Cleanup function to be executed when the component loses focus
           return () => {
-            setPage(1);
-            console.log('Screen is not focused');
-            // You can add cleanup logic here, such as clearing data or cancelling ongoing requests
+          setPage(1);
+          setBRSStatus('ok');
+          setBRSCount(0);
+          AsyncStorage.setItem('currentBRSTotal', String(totalBRS));
             
           };
         }, [selectedWilayah])
@@ -297,7 +386,7 @@ function BRSScreen() {
         <TouchableOpacity onPress={() => navigation.navigate('BRS Detail', { brsId: item.brs_id })}>
           <View style={styles.itemContainer}>
             <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.date}>{item.updt_date}</Text>
+            <Text style={styles.date}>{item.rl_date}</Text>
           </View>
         </TouchableOpacity>
       );
@@ -328,20 +417,22 @@ function BRSScreen() {
     const { selectedWilayah, setWilayah } = useWilayah();
     const [totalPages, setTotalPages] = useState(1);
     const flatListRef = useRef();
+
+    const { setBeritaStatus } = useFocus();
+    const { setBeritaCount } = useFocus();
+    const { totalBerita } = useFocus();
   
     const fetchAndUpdateData = async (currentPage) => {
       try {
         const API_URL_PUBLIKASI = `https://webapi.bps.go.id/v1/api/list/?model=news&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985&page=${currentPage}`;
-        console.log('API URL:', API_URL_PUBLIKASI);
   
         const response = await fetch(API_URL_PUBLIKASI);
         const result = await response.json();
-        console.log('API Response:', result);
   
         if (result.status === 'OK' && result.data && result.data.length > 1) {
-          // Filter data for unique combinations of month and year
+          
           const currentDate = new Date();
-          const currentMonth = currentDate.getMonth() + 1; // Months are zero-based
+          const currentMonth = currentDate.getMonth() + 1; 
           const currentYear = currentDate.getFullYear();
           const uniqueItems = new Map();
   
@@ -351,7 +442,6 @@ function BRSScreen() {
             const itemYear = itemDate.getFullYear();
             const key = `${itemMonth}_${itemYear}_${item.news_id}`;
   
-            // Only add the item to uniqueItems if it hasn't been added for this month and year
             if (itemMonth === currentMonth && itemYear === currentYear && !uniqueItems.has(key)) {
               uniqueItems.set(key, item);
             }
@@ -372,22 +462,37 @@ function BRSScreen() {
         flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
       }
     }, [selectedWilayah]);
-  
+
     useEffect(() => {
-      fetchData(1);
+      const fetchDataAndUpdate = async (currentPage) => {
+        try {
+          setLoading(true);
+          setPage(currentPage);
+          
+    
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      fetchDataAndUpdate(1);
+    
     }, [selectedWilayah]);
+   
+  
     useFocusEffect(
         React.useCallback(() => {
-          console.log('Screen is focused');
+        
           setData([]);
           setPage(1);
-          fetchData(1);
+          fetchAndUpdateData(1);
     
-          // Cleanup function to be executed when the component loses focus
           return () => {
             setPage(1);
-            console.log('Screen is not focused');
-            // You can add cleanup logic here, such as clearing data or cancelling ongoing requests
+
+            setBeritaStatus('ok');
+            setBeritaCount(0);
+            AsyncStorage.setItem('currentBeritaTotal', String(totalBerita));
             
           };
         }, [selectedWilayah])
@@ -443,20 +548,22 @@ function BRSScreen() {
     const { selectedWilayah, setWilayah } = useWilayah();
     const [totalPages, setTotalPages] = useState(1);
     const flatListRef = useRef();
+
+    const { setTabelStatus } = useFocus();
+    const { setTabelCount } = useFocus();
+    const { totalTabel } = useFocus();
   
     const fetchAndUpdateData = async (currentPage) => {
       try {
         const API_URL_PUBLIKASI = `https://webapi.bps.go.id/v1/api/list/?model=statictable&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985&page=${currentPage}`;
-        console.log('API URL:', API_URL_PUBLIKASI);
   
         const response = await fetch(API_URL_PUBLIKASI);
         const result = await response.json();
-        console.log('API Response:', result);
   
         if (result.status === 'OK' && result.data && result.data.length > 1) {
-          // Filter data for unique combinations of month and year
+          
           const currentDate = new Date();
-          const currentMonth = currentDate.getMonth() + 1; // Months are zero-based
+          const currentMonth = currentDate.getMonth() + 1; 
           const currentYear = currentDate.getFullYear();
           const uniqueItems = new Map();
   
@@ -466,7 +573,6 @@ function BRSScreen() {
             const itemYear = itemDate.getFullYear();
             const key = `${itemMonth}_${itemYear}_${item.table_id}`;
   
-            // Only add the item to uniqueItems if it hasn't been added for this month and year
             if (itemMonth === currentMonth && itemYear === currentYear && !uniqueItems.has(key)) {
               uniqueItems.set(key, item);
             }
@@ -474,6 +580,8 @@ function BRSScreen() {
   
           setData((prevData) => [...prevData, ...Array.from(uniqueItems.values())]);
           setTotalPages(result.page);
+
+          
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -487,22 +595,37 @@ function BRSScreen() {
         flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
       }
     }, [selectedWilayah]);
-  
+
     useEffect(() => {
-      fetchData(1);
+      const fetchDataAndUpdate = async (currentPage) => {
+        try {
+          setLoading(true);
+          setPage(currentPage);
+          
+    
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      fetchDataAndUpdate(1);
+    
     }, [selectedWilayah]);
+   
+  
     useFocusEffect(
         React.useCallback(() => {
-          console.log('Screen is focused');
+        
           setData([]);
           setPage(1);
-          fetchData(1);
+          fetchAndUpdateData(1);
     
-          // Cleanup function to be executed when the component loses focus
           return () => {
             setPage(1);
-            console.log('Screen is not focused');
-            // You can add cleanup logic here, such as clearing data or cancelling ongoing requests
+
+            setTabelStatus('ok');
+            setTabelCount(0);
+            AsyncStorage.setItem('currentTabelTotal', String(totalTabel));
             
           };
         }, [selectedWilayah])
@@ -558,20 +681,22 @@ function BRSScreen() {
     const { selectedWilayah, setWilayah } = useWilayah();
     const [totalPages, setTotalPages] = useState(1);
     const flatListRef = useRef();
+
+    const { setPublikasiStatus } = useFocus();
+    const { setPublikasiCount } = useFocus();
+    const { totalPublikasi } = useFocus();
   
     const fetchAndUpdateData = async (currentPage) => {
       try {
         const API_URL_PUBLIKASI = `https://webapi.bps.go.id/v1/api/list/?model=publication&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985&page=${currentPage}`;
-        console.log('API URL:', API_URL_PUBLIKASI);
   
         const response = await fetch(API_URL_PUBLIKASI);
         const result = await response.json();
-        console.log('API Response:', result);
   
         if (result.status === 'OK' && result.data && result.data.length > 1) {
-          // Filter data for unique combinations of month and year
+          
           const currentDate = new Date();
-          const currentMonth = currentDate.getMonth() + 1; // Months are zero-based
+          const currentMonth = currentDate.getMonth() + 1; 
           const currentYear = currentDate.getFullYear();
           const uniqueItems = new Map();
   
@@ -581,7 +706,6 @@ function BRSScreen() {
             const itemYear = itemDate.getFullYear();
             const key = `${itemMonth}_${itemYear}_${item.pub_id}`;
   
-            // Only add the item to uniqueItems if it hasn't been added for this month and year
             if (itemMonth === currentMonth && itemYear === currentYear && !uniqueItems.has(key)) {
               uniqueItems.set(key, item);
             }
@@ -602,22 +726,36 @@ function BRSScreen() {
         flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
       }
     }, [selectedWilayah]);
-  
+
     useEffect(() => {
-      fetchData(1);
+      const fetchDataAndUpdate = async (currentPage) => {
+        try {
+          setLoading(true);
+          setPage(currentPage);
+          
+    
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      fetchDataAndUpdate(1);
+    
     }, [selectedWilayah]);
+   
+  
     useFocusEffect(
         React.useCallback(() => {
-          console.log('Screen is focused');
+        
           setData([]);
           setPage(1);
-          fetchData(1);
+          fetchAndUpdateData(1);
     
-          // Cleanup function to be executed when the component loses focus
           return () => {
             setPage(1);
-            console.log('Screen is not focused');
-            // You can add cleanup logic here, such as clearing data or cancelling ongoing requests
+          setPublikasiStatus('ok');
+          setPublikasiCount(0);
+          AsyncStorage.setItem('currentPublikasiTotal', String(totalPublikasi));
             
           };
         }, [selectedWilayah])

@@ -1,33 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { Table, Row } from 'react-native-table-component';
 import * as FileSystem from 'expo-file-system';
 import Toast from 'react-native-toast-message';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
-
+import *  as Sharing from 'expo-sharing';
 
 const DynamicTable = ({ route }) => {
   const [data, setData] = useState([]);
   const [columnDescriptions, setColumnDescriptions] = useState({});
 
-  const { tableId } = route.params;
-  const { tahun } = route.params;
-  const { judul } = route.params;
-  const { sumber } = route.params;
+  const { tableId, tahun, judul, sumber } = route.params;
   const navigation = useNavigation();
 
   useEffect(() => {
-
     const hideTabBar = () => {
       navigation.getParent()?.setOptions({ tabBarStyle: { display: 'none' }, tabBarVisible: false });
     };
   
-    // Function to show the bottom tab bar
     const showTabBar = () => {
       navigation.getParent()?.setOptions({ tabBarStyle: {
-        height: 70,
-        backgroundColor: '#E3ECFC',
+        height: 100,
+        backgroundColor: '#F5FBFF',
         justifyContent: "center",
         alignItems: "center",
       }, });
@@ -37,7 +32,7 @@ const DynamicTable = ({ route }) => {
     fetchData();
     fetchColumnDescriptions();
 
-  return () => {
+    return () => {
       showTabBar();
     };
   }, [navigation]);
@@ -68,12 +63,8 @@ const DynamicTable = ({ route }) => {
     }
   };
 
-  if (!data || data.length === 0 || !columnDescriptions || Object.keys(columnDescriptions).length === 0) {
-    return null;
-  }
-
-  const excludedColumns = ['id', 'idkab', 'updated_at','tahun'];
-  const columns = Object.keys(data[0]).filter(column => !excludedColumns.includes(column));
+  const excludedColumns = ['id', 'idkab','idkec', 'updated_at','tahun'];
+  const columns = Object.keys(data[0] || {}).filter(column => !excludedColumns.includes(column));
 
   const renderHeader = () => {
     return (
@@ -95,6 +86,67 @@ const DynamicTable = ({ route }) => {
     });
   };
 
+
+  if (Platform.OS === 'IOS') {
+  const downloadAndShareCSV = async () => {
+    try {
+      const csvData = convertToCSV(data);
+      const fileName = `table_data_${tableId}_${tahun}.csv`;
+      const filePath = FileSystem.cacheDirectory + fileName;
+      
+      // Adding title to CSV content
+      const title = `Title: ${judul}, Year: ${tahun}, Source: ${sumber}\n\n`;
+      const csvContent = title + csvData;
+  
+      await FileSystem.writeAsStringAsync(filePath, csvContent, { encoding: FileSystem.EncodingType.UTF8 });
+  
+      if (Platform.OS === 'ios') {
+        await Sharing.shareAsync(filePath);
+      } else {
+        showToast('info', 'Downloaded CSV', 'Check your Downloads folder');
+      }
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+    }
+  };
+
+  const convertToCSV = (data) => {
+    const header = columns.map(column => columnDescriptions[column] || column);
+    const rows = data.map(item => columns.map(column => item[column]));
+
+    const csvContent = [header.join(','), ...rows.map(row => row.join(','))].join('\n');
+
+    return csvContent;
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView>
+        <ScrollView horizontal={true}>
+          <View style={styles.container}>
+            <Text>{judul}, {tahun}</Text>
+            <Table borderStyle={{ borderWidth: 1, borderColor: '#ddd' }}>
+              {renderHeader()}
+              {renderRows()}
+            </Table>
+            <Text>Sumber: {sumber}</Text>
+          </View>
+        </ScrollView>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
+      </ScrollView>
+
+      <View style={styles.bottomButtonContainer}>
+        <TouchableOpacity
+          onPress={downloadAndShareCSV}
+          style={{ width: '20%', padding: 6, borderRadius: 8, alignItems: 'center' }}
+        >
+          <MaterialCommunityIcons name="download-box" size={30} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+else{
   const saveFile = async (uri, filename, mimetype) => {
     if (Platform.OS === "android") {
       const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
@@ -141,47 +193,36 @@ const DynamicTable = ({ route }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-    <ScrollView >
-      <ScrollView horizontal={true}>
-        <View style={styles.container}>
-         <Text> {judul}, {tahun} </Text>
-          <Table borderStyle={{ borderWidth: 1, borderColor: '#ddd' }}>
-            {renderHeader()}
-            {renderRows()}
-          </Table>
-          <Text> Sumber: {sumber} </Text>
-          
-        </View>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView>
+        <ScrollView horizontal={true}>
+          <View style={styles.container}>
+            <Text>{judul}, {tahun}</Text>
+            <Table borderStyle={{ borderWidth: 1, borderColor: '#ddd' }}>
+              {renderHeader()}
+              {renderRows()}
+            </Table>
+            <Text>Sumber: {sumber}</Text>
+          </View>
+        </ScrollView>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </ScrollView>
-      <Toast ref={(ref) => Toast.setRef(ref)} />
-    </ScrollView>
 
-    <View style={styles.bottomButtonContainer}>
-    <View style={{ flexDirection: 'row' }}>
-      
-    <TouchableOpacity
+      <View style={styles.bottomButtonContainer}>
+        <TouchableOpacity
           onPress={downloadExcel}
-          style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
+          style={{ width: '20%', padding: 6, borderRadius: 8, alignItems: 'center' }}
         >
-          <MaterialCommunityIcons name="download-box"  size={30} />
-          <Text>Download</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-         
-          style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
-        >
-        </TouchableOpacity>
-        <TouchableOpacity
-          
-          style={{ width: '60%',  padding: 12, borderRadius: 4, alignItems: 'center' }}
-        >
+          <MaterialCommunityIcons name="download-box" size={30} />
         </TouchableOpacity>
       </View>
-      </View>
-
     </View>
   );
+
+}
+
+
+
 };
 
 const styles = StyleSheet.create({
@@ -192,7 +233,6 @@ const styles = StyleSheet.create({
   header: {
     height: 40,
     backgroundColor: '#f1f8ff',
-    
   },
   headerText: {
     fontWeight: 'bold',
@@ -207,27 +247,13 @@ const styles = StyleSheet.create({
   },
   cellText: {
     textAlign: 'center',
-    
     width: 150,
   },
-  downloadButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-    alignSelf: 'left',
-  },
-  downloadButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
   bottomButtonContainer: {
-    
     width: '100%',
     backgroundColor: 'white',
     elevation: 4,
     padding: 6,
-    
   },
 });
 

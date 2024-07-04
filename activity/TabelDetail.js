@@ -7,6 +7,7 @@ import * as FileSystem from 'expo-file-system';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import *  as Sharing from 'expo-sharing';
 
 
 const ApiView = ({ route }) => {
@@ -30,8 +31,8 @@ const ApiView = ({ route }) => {
     // Function to show the bottom tab bar
     const showTabBar = () => {
       navigation.getParent()?.setOptions({ tabBarStyle: {
-        height: 70,
-        backgroundColor: '#E3ECFC',
+        height: 100,
+        backgroundColor: '#F5FBFF',
         justifyContent: "center",
         alignItems: "center",
       }, });
@@ -94,10 +95,10 @@ const ApiView = ({ route }) => {
             showToast2('error', 'Save failed', 'There was an error during file save.');
           });
       } else {
-        shareAsync(uri);
+        Sharing.shareAsync(uri);
       }
     } else {
-      shareAsync(uri);
+      Sharing.shareAsync(uri);
     }
   };
 
@@ -109,11 +110,11 @@ const ApiView = ({ route }) => {
 
         // Check if the fileUri is a valid string
         if (typeof fileUri === 'string' && fileUri.trim() !== '') {
-          showToast('info', 'Download started', 'Your PDF download is in progress...', 0);
+          showToast('info', 'Download started', 'Your Excel download is in progress...', 0);
 
           const downloadResumable = FileSystem.createDownloadResumable(
             fileUri,
-            FileSystem.documentDirectory + `${apiData.data.title.replace(/\//g, '_')}.pdf`,
+            FileSystem.documentDirectory + `${apiData.data.title.replace(/\//g, '_')}.xls`,
             {},
             (progress) => handleDownloadProgress(progress)
           );
@@ -123,7 +124,7 @@ const ApiView = ({ route }) => {
           // Use the fileInfo.uri to access the downloaded file path
 
           // Save the downloaded file using saveFile function
-          await saveFile(uri, `${apiData.data.title}.xlsx`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          await saveFile(uri, `${apiData.data.title}.xls`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         } else {
           console.error('Invalid file URL:', fileUri);
         }
@@ -147,7 +148,7 @@ const ApiView = ({ route }) => {
   
         // Check if the fileUri is a valid string
         if (typeof fileUri === 'string' && fileUri.trim() !== '') {
-          const message = `Check out this link: ${fileUri}`;
+          const message = `Temukan Tabel ${apiData.data.title} pada link berikut: ${fileUri}`;
   
           // Share the link using Expo's Sharing module
           await Share.share({
@@ -188,7 +189,7 @@ const ApiView = ({ route }) => {
 
   return (
 
-    <View style={{ flex: 1, paddingTop : '2%', }}>
+    <View style={{ flex: 1, paddingTop : '2%',backgroundColor: '#fff', }}>
     <ScrollView>
        
       <View style={{ marginHorizontal: 5, flex: 1 }}>
@@ -222,14 +223,14 @@ const ApiView = ({ route }) => {
           style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
         >
           <MaterialCommunityIcons name="download-box"  size={30} />
-          <Text>Download</Text>
+          
         </TouchableOpacity>
         <TouchableOpacity
           onPress={handleShare}
           style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
         >
           <MaterialCommunityIcons name="share-variant"  size={30} />
-          <Text>Share</Text>
+          
         </TouchableOpacity>
         <TouchableOpacity
           

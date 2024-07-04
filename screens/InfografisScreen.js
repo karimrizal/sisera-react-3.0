@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Button, Modal } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Button, Modal, Share } from 'react-native';
 import { useWilayah } from '../WilayahContext';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import Toast from 'react-native-toast-message';
 import { useFocus } from '../FocusContext';
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -110,9 +110,7 @@ const App = () => {
           FileSystem.documentDirectory + `${sanitizedTitle}.png` // Change the extension to PNG or another suitable image format
         );
   
-        // Use the fileInfo.uri to access the downloaded file path
-        console.log('File downloaded to:', fileInfo.uri);
-  
+      
         // Save the downloaded file using saveFile function with the appropriate MIME type
         await saveFile(fileInfo.uri, `${sanitizedTitle}.png`, 'image/png'); // Adjust MIME type and file extension accordingly
       } else {
@@ -122,6 +120,28 @@ const App = () => {
       console.error('Error downloading file:', error);
     }
   };
+
+  const handleShare = async (dlUrl, title) => {
+    try {
+      if (dlUrl) {
+        const fileUri = dlUrl; // Use the specific dlUrl passed as a parameter
+  
+        if (typeof fileUri === 'string' && fileUri.trim() !== '') {
+          const message = `Temukan Infografis ${title} pada link berikut: ${fileUri}`;
+  
+          await Share.share({
+            message: message,
+            url: fileUri,
+          });
+        } else {
+          console.error('Invalid file URL:', fileUri);
+        }
+      }
+    } catch (error) {
+      console.error('Error sharing file:', error);
+    }
+  };
+
 
   const handleModal = async (dlUrl, title) => {
     try {
@@ -133,8 +153,7 @@ const App = () => {
           FileSystem.documentDirectory + `${sanitizedTitle}.png`
         );
 
-        console.log('File downloaded to:', fileInfo.uri);
-
+      
         
         // Show the image in the modal
         setSelectedImage(fileInfo.uri);
@@ -159,13 +178,34 @@ const App = () => {
       <Image style={styles.itemImage} source={{ uri: item.img }} />
       <Text style={styles.itemTitle}>{item.title}</Text>
       
-      <Button
-        title="Download"
-        onPress={() => {
-          handleInfografisDownload(item.dl, item.title);
-        }}
-        style={{ marginBottom: 14, width: '40%', alignSelf: 'center' }}
-      />
+      <View>
+    <View style={{ flexDirection: 'row' }}>
+      
+    <TouchableOpacity
+          onPress={() => {
+            handleInfografisDownload(item.dl, item.title);
+          }}
+          style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
+        >
+          <MaterialCommunityIcons name="download-box"  size={30} />
+          
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            handleShare(item.dl, item.title);
+          }}
+          style={{ width: '20%',  padding: 6, borderRadius: 8, alignItems: 'center' }}
+        >
+          <MaterialCommunityIcons name="share-variant"  size={30} />
+          
+        </TouchableOpacity>
+        <TouchableOpacity
+          
+          style={{ width: '60%',  padding: 12, borderRadius: 4, alignItems: 'center' }}
+        >
+        </TouchableOpacity>
+      </View>
+      </View>
     </TouchableOpacity>
     </View>
   );
@@ -207,19 +247,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    
+    backgroundColor: '#fff',
+    paddingleft : '8%'
   },
   itemContainer: {
-    width: 300, // Set the desired width for each item
     
-    paddingTop: '8%',
-   
+    flex : 1,
+    paddingTop: '4%',
+    borderWidth: 1, // Add border width
+    borderColor: '#ccc', // Add border color
+    borderRadius: 8,
+    overflow: 'hidden', // To ensure border-radius works on the image
+    padding : 10
   },
   itemImage: {
     width: '100%',
-    height: 200,
+    height: 300,
     resizeMode: 'cover',
     borderRadius: 8,
+    objectFit :'fill',
+    paddingleft : '8%'
   },
   itemTitle: {
     fontSize: 18,
@@ -229,7 +276,6 @@ const styles = StyleSheet.create({
   itemDescription: {
     fontSize: 14,
     color: '#888',
-    
   },
   modalContainer: {
     flex: 1,

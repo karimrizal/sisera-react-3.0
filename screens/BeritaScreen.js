@@ -54,11 +54,11 @@ const App = () => {
     try {
       
       const API_URL = `https://webapi.bps.go.id/v1/api/list/?model=news&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985&page=${isFirstRender ? 1 : page}`;
-      console.log('API URL:', API_URL);
+     
       setIsFirstRender(false);
       const response = await fetch(API_URL);
       const result = await response.json();
-      console.log('API Response:', result);
+     
 
       if (result.status === 'OK' && result.data && result.data.length > 1 ) {
         setData((prevData) => [...prevData, ...result.data[1]]);
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#fff',
   },
   itemContainer: {
     marginBottom: 8,
@@ -114,12 +115,12 @@ const styles = StyleSheet.create({
     paddingTop: '4%',
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'justify',
   },
   date: {
-    fontSize: 18,
+    fontSize: 12,
     color: '#666',
   },
 });

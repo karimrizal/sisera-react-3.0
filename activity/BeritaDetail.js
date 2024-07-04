@@ -24,13 +24,13 @@ const ApiView = ({ route }) => {
 
   const injectedJavaScript = `
     const style = document.createElement('style');
-    style.innerHTML = 'body { font-size: 24pt; }';
+    style.innerHTML = 'body { font-size: 30pt; }';
     document.head.appendChild(style);
   `;
 
   return (
-    <ScrollView>
-      <Image source={{ uri: apiData?.data?.picture }} style={{  height: 300, maxWidth:'100%', marginLeft : 15, marginRight : 15 }} />
+    <ScrollView style={{ flex: 1, paddingTop : '2%',backgroundColor: '#fff', }}>
+      <Image source={{ uri: apiData?.data?.picture }} style={{  height: 300, maxWidth:'100%', marginLeft : 15, marginRight : 15,objectFit : 'fill' }} />
       <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'justify', marginVertical: 10, paddingLeft : '4%', paddingRight : '4%' }}>
         {apiData?.data?.title}
       </Text>
@@ -44,6 +44,7 @@ const ApiView = ({ route }) => {
           />
         ) : null}
       </View>
+      <Text>{'\n'}</Text>
       
     </ScrollView>
   );

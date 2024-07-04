@@ -15,7 +15,7 @@ const App = () => {
   
 
   const flatListRef = useRef();
-  console.log(page)
+
 
   useEffect(() => {
     
@@ -26,7 +26,7 @@ const App = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('Screen is focused');
+      
       setIsFirstRender(true);
       setData([]);
       setPage(1);
@@ -35,12 +35,10 @@ const App = () => {
       // Reset isMounted on focus
       isMountedRef.current = true;
 
-      // Cleanup function to be executed when the component loses focus
+      
       return () => {
         setPage(1);
-        console.log('Screen is not focused');
-        // You can add cleanup logic here, such as clearing data or cancelling ongoing requests
-        
+      
       };
     }, [selectedWilayah])
   );
@@ -49,11 +47,11 @@ const App = () => {
     try {
       
       const API_URL = `https://webapi.bps.go.id/v1/api/list/?model=publication&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985&page=${isFirstRender ? 1 : page}`;
-      console.log('API URL:', API_URL);
+    
       setIsFirstRender(false);
       const response = await fetch(API_URL);
       const result = await response.json();
-      console.log('API Response:', result);
+      
 
       if (result.status === 'OK' && result.data && result.data.length > 1 ) {
         setData((prevData) => [...prevData, ...result.data[1]]);
@@ -125,12 +123,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemTitle: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     marginTop: 8,
   },
   date: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#666',
     marginTop: 4,
   },

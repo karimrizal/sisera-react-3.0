@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Search from '../components/Search';
 import Menu from '../components/Menu';
 import { useFonts } from 'expo-font';
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as SplashScreen from 'expo-splash-screen'
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { TabBar } from 'react-native-tab-view';
@@ -24,14 +24,70 @@ import DecoEllipse from '../assets/icons/DecoEllipse.svg'
 import ArrowRight from '../assets/icons/ArrowRight.svg'
 import { useNavigation } from '@react-navigation/native';
 import { useBookmarkContext } from '../BookmarkContext';
-import ModalDropdown from 'react-native-modal-dropdown';
+
 import { useWilayah } from '../WilayahContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { width, height } = Dimensions.get('window');
+
+const getDynamicFontSize = () => {
+  if (width >= 1024){
+    return width/36;
+  }
+  else{
+    return 16;
+  }
+}
+
+const getDynamicFontSize2 = () => {
+  if (width >= 1024){
+    return width/56;
+  }
+  else{
+    return 16;
+  }
+}
+
+const baseFontSize = 14;
+const baseFontSizeA = 16;
+let defaultSpacing = width/600;
 
 
 const styles = StyleSheet.create({
   text: {
     fontFamily: 'DMSans',
     color: 'white',
+    fontSize: (width / 360) * baseFontSize,
+  },
+
+  menuContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingLeft: 40,
+    paddingRight: 40,
+  },
+  menuRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+
+  button: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    flex: 1,
+    alignItems: 'center',
+  },
+  textContainerButton: {
+    flex: 1,
+    marginRight: 10,
+  },
+  textButton: {
+    color: '#000', // Customize text color as needed
   },
   modalContainer: {
     flex: 1,
@@ -52,12 +108,12 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: (width / 360) * baseFontSize,
   },
   textIndikator: {
-    fontSize: 18,
+    fontSize: 18 * defaultSpacing,
     color: 'white',
-    fontFamily: 'DMSansBold'
+    fontFamily: 'DMSansBold',
 
   },
   modalContainer: {
@@ -68,10 +124,11 @@ const styles = StyleSheet.create({
   },
 
   blueBox: {
-    backgroundColor: '#1B85F3',
+    backgroundColor: '#ffffff',
     borderRadius: 14,
     padding: 20,
-    width: '80%', // Adjust the width as needed
+    width: '80%', 
+    height: '60%'
   },
 
   optionItem: {
@@ -80,26 +137,33 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
   },
   textWaktu: {
-    fontSize: 12,
+    fontSize: (width / 360) * baseFontSize,
     color: 'white',
     fontFamily: 'DMSans',
     marginVertical: '5%',
   },
   textStat: {
-    fontSize: 20,
+    fontSize: (width / 360) * baseFontSize,
     color: 'white',
     fontFamily: 'DMSansBold'
   },
   inf10: {
-    fontSize: 10,
+    fontSize: (width / 360) * baseFontSize,
     fontFamily: 'DMSans'
   },
   infJudul: {
-    fontSize: 14,
+    fontSize: (width / 360) * baseFontSize,
     fontFamily: 'DMSansBold'
   },
   itemContainer: {
     width: 300, // Set the desired width for each item
+    marginRight: 16,
+    paddingLeft: '4%',
+    paddingTop: '4%',
+   
+  },
+  itemContainerPub: {
+    width: '80%', // Set the desired width for each item
     marginRight: 16,
     paddingLeft: '4%',
     paddingTop: '4%',
@@ -135,22 +199,22 @@ const styles = StyleSheet.create({
     marginRight: 16, // Adjust the margin as needed
   },
   InforagisImage: {
-    width: 300, // Set the desired width for the image
-    height: 300, // Set the desired height for the image
-    
+    width: 280,
+    height: 300,
     borderRadius: 4,
-    marginRight: 1, // Adjust the margin as needed
+    
+    objectFit : 'fill'
   },
   textContainer: {
   
     marginLeft: 10,
     marginRight: 0,
-    width: 200,
+    width: '80%',
     textAlign: 'justify',
     
   },
   itemTitle: {
-    fontSize: 14,
+    fontSize: getDynamicFontSize2(),
     fontWeight: 'bold',
     textAlign: 'justify',
    
@@ -219,27 +283,16 @@ const renderTabBar = (props) => (
     {...props}
     indicatorStyle={{ backgroundColor: '#b6b6b6' }}
     style={{ backgroundColor: '#f6f6f6' }}
-    scrollEnabled={true}
+    scrollEnabled={false} // Set scrollEnabled to false
     activeColor='#0d49a8'
     inactiveColor='#b6b6b6'
     tabStyle={{
       gap: 5,
       fontFamily: 'DMSans',
     }}
-    renderLabel={({ route, focused, color }) => {
-      return (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {route.title === 'BRS' ? (
-            <Text style={{ color, fontFamily: 'DMSans' }}>{route.title}</Text>
-          ) : (
-            <>
-              <Text style={{ color, fontFamily: 'DMSans' }}>{route.title}</Text>
-              <ArrowRight style={{ marginLeft: 5 }} fill="#6895D2" />
-            </>
-          )}
-        </View>
-      );
-    }}
+    renderLabel={({ route, focused, color }) => (
+      <Text style={{ color, fontFamily: 'DMSans' }}>{route.title}</Text>
+    )}
   />
 );
 
@@ -331,7 +384,7 @@ function PublikasiCard() {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.itemContainer}
+      style={styles.itemContainerPub}
       onPress={() => navigation2.navigate('Publikasi Detail', { pubId: item.pub_id })}
     >
       <View style={styles.itemContentPublikasi}>
@@ -521,8 +574,11 @@ function IndikatorCard() {
     paddingLeft: '4%',
   }}
 >
-        <Text style={styles.textIndikator}>{item.title}</Text>
-        <Text style={styles.textWaktu}>{item.value}</Text>
+        <Text style={[styles.textIndikator, { paddingBottom: 8 }]}>{item.title}</Text>
+        
+        <Text style={styles.textWaktu}>{parseFloat(item.value).toLocaleString('en-US', { useGrouping: true }).replace(/,/g, ' ')} {item.unit !== 'Tidak Ada Satuan' && `(${item.unit})`}</Text>
+        
+        
             {/* Add other text components as needed */}
           </View>
         </View>
@@ -781,8 +837,37 @@ function HomeScreen({navigation}) {
     navigation.navigate('Search');
   };
 
+  
+  const handlePress = () => {
+    navigation.navigate('Search');
+  };
+
+  const openInstagram = () => {
+    Linking.openURL('https://www.instagram.com/bpsprovsultra/');
+  };
+
+  const openFacebook = () => {
+    Linking.openURL('https://www.facebook.com/bpsprovsultra');
+  };
+
+  const openYoutube = () => {
+    Linking.openURL('https://www.youtube.com/c/bpsprovsultra');
+  };
+
+  const openLokasi = () => {
+    Linking.openURL('https://maps.app.goo.gl/JeaqkbiLX7TSpY7w7');
+  };
+
+  const openEmail = () => {
+    Linking.openURL('mailto:bps7400@bps.go.id');
+  };
+
+  const openTelpon = () => {
+    Linking.openURL('tel:0401-3135363');
+  };
 
   return (
+    
     <ScrollView horizontal={false} style={{
       flex: 1,
       backgroundColor: 'white'
@@ -819,7 +904,7 @@ function HomeScreen({navigation}) {
               style={{
                 // position: 'absolute',
                 fontFamily: 'DMSans',
-                fontSize: 14,
+                fontSize: getDynamicFontSize(),
                 color: '#ECEFF2'
               }}
             >Selamat datang di SISERA!</Text>
@@ -827,7 +912,7 @@ function HomeScreen({navigation}) {
               style={{
                 // position: 'absolute',
                 fontFamily: 'DMSansBold',
-                fontSize: 18,
+                fontSize: getDynamicFontSize(),
                 color: 'white'
               }}>Data Sulawesi Tenggara Dalam Genggaman</Text>
           </View>
@@ -851,19 +936,13 @@ function HomeScreen({navigation}) {
 
       <View style={{ flexDirection: 'row', flex: 1, paddingLeft : '4%', marginTop: 20 }}>
 
-      <TextInput
-  onFocus={() => navigation.navigate('Search')}
-  placeholder="Cari Disini..."
-  style={{
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-    flex :1,
-    
-  }}
-/>
+      <TouchableOpacity onPress={handlePress} style={styles.button}>
+      <View style={styles.textContainerButton}>
+        <Text style={styles.textButton}>Cari Disini...</Text>
+      </View>
+    </TouchableOpacity>
+
+
 <View style={{ flex: 1, paddingLeft : '4%' }}>
       <Text style={styles.label}>Pilih Wilayah:</Text>
 
@@ -924,22 +1003,30 @@ function HomeScreen({navigation}) {
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
         paddingVertical: 20,
+    
+       
         // length: {dimensionsWidth},
       }}>
-        <Menu navigation={navigation} name='Publikasi' menuIcon={<DocumentIcon />} />
+        <View style={styles.menuContainer}>
+      <View style={styles.menuRow}>
+        <Menu navigation={navigation} name='Publikasi' menuIcon={<DocumentIcon />}  />
         <Menu navigation={navigation} name='Tabel' menuIcon={<TabelIcon />} />
         <Menu navigation={navigation} name='Infografis' menuIcon={<InfografisIcon />} />
         <Menu navigation={navigation} name='BRS' menuIcon={<RilisDataIcon />} />
+      </View>
+      <View style={styles.menuRow}>
         <Menu navigation={navigation} name='Berita' menuIcon={<BeritaIcon />} />
         <Menu navigation={navigation} name='Jadwal Rilis' menuIcon={<JadwalRilisIcon />} />
         <Menu navigation={navigation} name='Konsultasi' menuIcon={<KonsultasiIcon />} />
         <Menu navigation={navigation} name='Syantik' menuIcon={<PPIDIcon />} />
-
+      </View>
+    </View>
+    
       </View>
 
       
       <View style={{
-        backgroundColor: '#f6f6f6',
+        backgroundColor: '#ffffff',
         height: 450,
       }}>
         
@@ -960,8 +1047,8 @@ function HomeScreen({navigation}) {
         
 
       <View style={{
-        backgroundColor: '#f6f6f6',
-        height: 330, 
+        backgroundColor: '#ffffff',
+        height: 400, 
           paddingLeft: '2%',
           
         
@@ -975,6 +1062,71 @@ function HomeScreen({navigation}) {
       <Text></Text>
         <InfografisCard />
       </View>
+
+      <View style={{
+        backgroundColor: '#ffffff',
+        height: 180, 
+          paddingLeft: '2%',
+          
+        
+      }}>
+        <Text style={{
+          fontFamily: 'DMSansBold',
+          fontSize: 20,
+          paddingLeft: '4%',
+          paddingBottom :10,
+        }}>Hubungi Kami</Text>
+
+        <View style={{ flexDirection: 'row',paddingBottom :8, }}> 
+        <Text style={{ width: '3%'}}></Text>
+        
+        <Text style={{ width: '97%',fontSize: 12,fontFamily: 'DMSansBold', }} onPress={openLokasi}> <MaterialCommunityIcons name="map-marker"  size={20} /> Jl. Boulevard No.1, Kota Kendari, Sulawesi Tenggara</Text>
+        </View>
+
+        <View style={{ flexDirection: 'row',paddingBottom :8,  }}> 
+        <Text style={{ width: '3%'}}></Text>
+        <Text style={{ width: '97%',fontSize: 12,fontFamily: 'DMSansBold', }} onPress={openTelpon}><MaterialCommunityIcons name="phone"  size={20} /> 0401-3135363</Text>
+        </View>
+
+        <View style={{ flexDirection: 'row', flex:1,paddingBottom :5,  }}> 
+        <Text style={{ width: '3%'}}></Text>
+        <Text style={{ width: '97%',fontSize: 12,fontFamily: 'DMSansBold', }} onPress={openEmail}><MaterialCommunityIcons name="email"  size={20} /> bps7400@bps.go.id</Text>
+        </View>
+
+      <View style={{ flexDirection: 'row', flex:1, alignItems: 'center',justifyContent: 'center',  }}>
+    
+    <TouchableOpacity style={{ width: '15%' }} onPress={openInstagram}>
+      <Image source={require('../assets/instagram.png')} style={{ width: 34, height: 34 }} />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ width: '15%' }} onPress={openFacebook}>
+      <Image source={require('../assets/facebook.png')} style={{ width: 34, height: 34 }} />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ width: '15%' }} onPress={openYoutube}>
+      <Image source={require('../assets/youtube.png')} style={{ width: 34, height: 46 }} />
+        </TouchableOpacity>
+        <Text>{'\n'}</Text>
+        </View>
+        
+      </View>
+
+      <View style={{
+    backgroundColor: '#ffffff',
+    height: 100,
+   
+    justifyContent: 'center',  
+    alignItems: 'center',  
+    paddingBottom :'4%'    
+}}>
+    <Text style={{ 
+        fontSize: 11,
+        color: '#333333', 
+        textAlign: 'center',      
+    }}>Copyright © 2024 Badan Pusat Statistik{'\n'}Provinsi Sulawesi Tenggara{'\n'}All Rights Reserved.{'\n'}v 3.0.1
+    </Text>
+    
+   
+
+</View>
     </ScrollView>
   );
 }

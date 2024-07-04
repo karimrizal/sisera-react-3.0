@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useWilayah } from '../WilayahContext';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
 
@@ -55,6 +56,25 @@ const App = () => {
     fetchData(`https://webapi.bps.go.id/v1/api/list/?model=subject&subcat=3&domain=${selectedWilayah.value}&key=1f5ea27aa195656fa79ee36110bda985`, setData3, setLoading3);
   }, [selectedWilayah]);
 
+
+  const handleShowDataPress = () => {
+    setShowData(!showData);
+    setShowData2(false);
+    setShowData3(false);
+  };
+
+  const handleShowData2Press = () => {
+    setShowData2(!showData2);
+    setShowData(false);
+    setShowData3(false);
+  };
+
+  const handleShowData3Press = () => {
+    setShowData3(!showData3);
+    setShowData(false);
+    setShowData2(false);
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate('Tabel Subject', { subId: item.sub_id })}>
       <View style={styles.itemContainer}>
@@ -66,10 +86,23 @@ const App = () => {
   return (
     <View style={styles.container}>
     <Text></Text>
-     <Button
-        title={showData ? 'Sosial dan Kependudukan' : 'Sosial dan Kependudukan'}
-        onPress={() => setShowData(!showData)}
-      />
+    <View style={styles.itemBorder}>
+    <View style={{ flexDirection: 'row' }}>
+    <TouchableOpacity style={{ width: '15%',  justifyContent: 'center' }} onPress={handleShowDataPress}>
+            
+      <MaterialCommunityIcons name="account-group"  size={20} color ='blue' />
+        </TouchableOpacity>
+
+      <TouchableOpacity style={{ width: '75%',justifyContent: 'center' }} onPress={handleShowDataPress}>
+          <Text style={{ fontFamily: 'DMSansBold', fontSize: 16, color:  '#000' }}>{showData ? 'Sosial dan Kependudukan' : 'Sosial dan Kependudukan'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{ width: '10%',  justifyContent: 'center' }} onPress={handleShowDataPress}>
+            
+         <MaterialCommunityIcons name="chevron-down"  size={20} />
+        </TouchableOpacity>
+</View>
+      </View>
       {showData && (
         <FlatList
           data={data}
@@ -79,10 +112,22 @@ const App = () => {
       )}
 
       <Text></Text>
- <Button
-        title={showData2 ? 'Ekonomi dan Perdagangan' : 'Ekonomi dan Perdagangan'}
-        onPress={() => setShowData2(!showData2)}
-      />
+
+      <View style={styles.itemBorder}>
+      <View style={{ flexDirection: 'row'}}>
+<TouchableOpacity style={{ width: '15%',  justifyContent: 'center' }} onPress={handleShowData2Press}>
+  <MaterialCommunityIcons name="store"  size={20} color ='orange' />
+    </TouchableOpacity>
+
+  <TouchableOpacity style={{ width: '75%',justifyContent: 'center'}} onPress={handleShowData2Press}>
+      <Text style={{ fontFamily: 'DMSansBold', fontSize: 16, color:  '#000' }}>{showData2 ? 'Ekonomi dan Perdagangan' : 'Ekonomi dan Perdagangan'}</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={{ width: '10%',  justifyContent: 'center' }} onPress={handleShowData2Press}>
+     <MaterialCommunityIcons name="chevron-down"  size={20} />
+    </TouchableOpacity>
+</View>
+  </View>
       
       {showData2 && (
         <FlatList
@@ -93,10 +138,23 @@ const App = () => {
       )}
       
       <Text></Text>
- <Button
-        title={showData3 ? 'Pertanian dan Pertambangan' : 'Pertanian dan Pertambangan'}
-        onPress={() => setShowData3(!showData3)}
-      />
+
+
+<View style={styles.itemBorder}>
+<View style={{ flexDirection: 'row' }}>
+<TouchableOpacity style={{ width: '15%',  justifyContent: 'center' }} onPress={handleShowData3Press}>
+  <MaterialCommunityIcons name="leaf"  size={20} color ='green' />
+    </TouchableOpacity>
+
+  <TouchableOpacity style={{ width: '75%',justifyContent: 'center' }} onPress={handleShowData3Press}>
+      <Text style={{ fontFamily: 'DMSansBold', fontSize: 16, color:  '#000' }}>{showData3 ? 'Pertanian dan Pertambangan' : 'Pertanian dan Pertambangan'}</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={{ width: '10%',  justifyContent: 'center' }}  onPress={handleShowData3Press}>
+     <MaterialCommunityIcons name="chevron-down"  size={20} />
+    </TouchableOpacity>
+    </View>
+  </View>
       
       {showData3 && (
         <FlatList
@@ -115,6 +173,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#fff',
   },
   itemContainer: {
     marginBottom: 16,
@@ -130,6 +189,16 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 18,
     color: '#666',
+  },
+  itemBorder: {
+    backgroundColor: '#fff',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 8,
+    width: '100%',
+    alignItems: 'flex-start',
+    borderWidth: 1,  
+    borderColor: '#0080e4', 
   },
 });
 

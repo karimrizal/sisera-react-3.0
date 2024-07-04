@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import DecoLines from '../assets/DecoLines.svg'
 import DecoEllipse from '../assets/icons/DecoEllipse.svg'
@@ -17,7 +17,54 @@ const App = () => {
   const navigation = useNavigation();
   const { bookmarkedItems, addBookmark, removeBookmark } = useBookmarkContext();
 
-  console.log(bookmarkedItems)
+  const { width, height } = Dimensions.get('window');
+const baseFontSize = 13;
+const baseFontSizeA = 11;
+const getDynamicFontSize = () => {
+  if (width >= 1024){
+    return width/36;
+  }
+  else{
+    return 16;
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  itemContainer: {
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    paddingBottom: 8,
+  },
+  textIndikator: {
+    fontSize: getDynamicFontSize(),
+    color: 'white',
+    fontFamily: 'DMSansBold',
+    paddingBottom: 8,
+
+  },  
+  textWaktu: {
+    fontSize: (width / 360) * baseFontSizeA,
+    color: 'white',
+    fontFamily: 'DMSans',
+    
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  date: {
+    fontSize: 18,
+    color: '#666',
+  },
+});
+
+
   const flatListRef = useRef();
 
   useEffect(() => {
@@ -61,8 +108,8 @@ const App = () => {
       <View style={styles.itemContainer}>
         <View
           style={{
-            width: 380,
-            height: 110,
+            width: '97%',
+            height: 150,
             backgroundColor: '#1B85F3',
             borderRadius: 16,
             flex: 1,
@@ -90,7 +137,7 @@ const App = () => {
           {/* Content */}
           <View
             style={{
-              height: '10%',
+              height: '20%',
               width: '80%',
               position: 'relative',
               bottom: '4%',
@@ -101,13 +148,19 @@ const App = () => {
               flexWrap: 'wrap',
             }}
           >
-            <Text style={[styles.textIndikator]}>{item.title}</Text>
-            <Text style={[styles.textWaktu]}>{item.value}</Text>
+            <Text style={[styles.textIndikator]}>{item.title}
+            {'\n'}
+            {parseFloat(item.value).toLocaleString('en-US', { useGrouping: true }).replace(/,/g, ' ')} {item.unit !== 'Tidak Ada Satuan' && `(${item.unit})`}
+            </Text>
+            
             {/* Add other text components as needed */}
-            <TouchableOpacity onPress={() => handleBookmark(item)}>
-            <Text>{bookmarkedItems.some((bookmark) => bookmark.hash_id === item.hash_id) ? 'Unbookmark' : 'Bookmark'}</Text>
-          </TouchableOpacity>
+          
+          
           </View>
+          <TouchableOpacity onPress={() => handleBookmark(item)}>
+            <Text style={{ fontSize: (width / 360) * baseFontSizeA,paddingTop: 8, paddingLeft : 15, paddingBottom : 8 }}>{bookmarkedItems.some((bookmark) => bookmark.hash_id === item.hash_id) ? 'Unbookmark' : 'Bookmark'}</Text>
+          </TouchableOpacity>
+          
         </View>
       </View>
     </TouchableOpacity>
@@ -126,38 +179,6 @@ const App = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  itemContainer: {
-    marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingBottom: 8,
-  },
-  textIndikator: {
-    fontSize: 14,
-    color: 'white',
-    fontFamily: 'DMSansBold',
-    paddingBottom: 8,
 
-  },  
-  textWaktu: {
-    fontSize: 12,
-    color: 'white',
-    fontFamily: 'DMSans',
-    marginVertical: '5%',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  date: {
-    fontSize: 18,
-    color: '#666',
-  },
-});
 
 export default App;

@@ -31,7 +31,7 @@ const CoolViewLayout = () => {
 
     return false;
   };
-  console.log(isTimeInRange())
+ 
   const { isLainnyaFocused, setLainnyaFocused } = useFocus();
   const [isButtonDisabled, setButtonDisabled] = useState(isTimeInRange());
 
@@ -133,28 +133,7 @@ const CoolViewLayout = () => {
         </View>
       </View>
 
-      <View style={styles.itemBorder}>
-      <View style={{ flexDirection: 'row', flex:1 }}>
-
-      <TouchableOpacity style={{ width: '15%',  justifyContent: 'center' }} onPress={() => handlePress(openChatWeb)}
-            disabled={!isButtonDisabled}>
-      <Image source={chatWebImageSource} style={{ width: 54, height: 54 }} />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{ width: '75%',justifyContent: 'center', paddingLeft: '6%' }} onPress={() => handlePress(openChatWeb)}
-            disabled={!isButtonDisabled}>
-          <Text style={{ fontFamily: 'DMSansBold', fontSize: 16, color: !isButtonDisabled ? 'gray' : '#0080e4' }}>Chat Web</Text>
-            <Text style={{ fontSize: 12,marginTop: 5, color: !isButtonDisabled ? 'gray' : '#000' }}>
-              Klik disini untuk chat lewat web (sultra.bps.go.id)
-            </Text>
-        </TouchableOpacity> 
-
-        <TouchableOpacity style={{ width: '10%',  justifyContent: 'center' }} onPress={() => handlePress(openChatWeb)}
-            disabled={!isButtonDisabled}>
-         <MaterialCommunityIcons name="chevron-right"  size={20} />
-        </TouchableOpacity>
-        </View>
-      </View>
+      
       
       <View style={styles.itemBorder}>
       <View style={{ flexDirection: 'row', flex:1 }}>

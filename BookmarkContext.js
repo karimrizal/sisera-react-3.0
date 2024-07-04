@@ -30,7 +30,7 @@ const BookmarkProvider = ({ children }) => {
       const savedBookmarks = await AsyncStorage.getItem('bookmarkedItems');
       if (!savedBookmarks) {
         // If there are no existing bookmarks, add the default item
-        dispatch({ type: 'ADD_BOOKMARK', payload: { hash_id: 'MzcxIzI=', title : "Jumlah Penduduk Provinsi Sulawesi Tenggara , 2023", value : 2749010 } });
+        dispatch({ type: 'ADD_BOOKMARK', payload: { hash_id: 'MzcxIzI=', title : "Jumlah Penduduk Provinsi Sulawesi Tenggara , 2023", value : 2749010, unit : 'Jiwa' } });
       } else {
         dispatch({ type: 'SET_BOOKMARKS', payload: JSON.parse(savedBookmarks) });
       }

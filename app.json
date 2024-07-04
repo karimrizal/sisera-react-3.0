@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "myreactnative",
-    "slug": "myreactnative",
-    "version": "1.0.0",
+    "name": "SISERA",
+    "slug": "SISERA",
+    "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/sisera.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splashscreen.png",
@@ -14,21 +14,27 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/sisera.png",
+      "bundleIdentifier": "com.bps.sisera",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildnumber": "5"
     },
     "android": {
-      "package": "com.test.app",
+      "package": "com.virtualbox.torchick.rog",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/sisera.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 21
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "f91bd4e4-3b30-44b9-95af-8850424f8f17"
+        "projectId": "82795df9-6ee7-4eb6-9dcd-192926202ea9"
       }
     }
   }
